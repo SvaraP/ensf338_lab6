@@ -23,7 +23,6 @@ class Heap:
             return item
         return None
     #Ai Decleartion: Used Chatgbt to fix the code for maintaining the heap 
-    #maintain heap property when elements are added.
     def heapSiftUp(self, index):
         parent = (index - 1) // 2
         while index > 0 and self.storage[index] < self.storage[parent]:
@@ -60,8 +59,9 @@ def testHeapWithEmptyArrayInput():
 
 def testHeapWithRandomArrayInput():
     heap = Heap()
-    random_input = [9, 1, 3, 2, 8, 6, 7, 5]
+    random_input = [5, 1, 8, 3, 6, 2, 7, 4]
     heap.heapify(random_input)
+    expectedOutput = sorted(random_input)
     assert sorted(heap.storage) == expectedOutput, "Test failed"
 
 # Run tests
