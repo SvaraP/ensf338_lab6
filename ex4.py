@@ -22,6 +22,7 @@ class Heap:
             self.heapSiftdown(0)
             return item
         return None
+    #Ai Decleartion: Used Chatgbt to fix the code for maintaining the heap 
     #maintain heap property when elements are added.
     def heapSiftUp(self, index):
         parent = (index - 1) // 2
@@ -42,7 +43,7 @@ class Heap:
     #swap elements in heap
     def exchange(self, i, j):
         self.storage[i], self.storage[j] = self.storage[j], self.storage[i]
-
+    #Ai Decleartion: Used Chatgbt to help us outline how to write the tests, which we then followed: 
 def testHeapWithSortedArrayInput():
     heap = Heap()
     sortedArrayInput = [5, 6, 7, 8, 9, 10]
@@ -59,9 +60,8 @@ def testHeapWithEmptyArrayInput():
 
 def testHeapWithRandomArrayInput():
     heap = Heap()
-    random_input = [5, 1, 8, 3, 6, 2, 7, 4]
+    random_input = [9, 1, 3, 2, 8, 6, 7, 5]
     heap.heapify(random_input)
-    expectedOutput = sorted(random_input)
     assert sorted(heap.storage) == expectedOutput, "Test failed"
 
 # Run tests
