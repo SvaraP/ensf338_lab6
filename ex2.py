@@ -1,93 +1,82 @@
-import timeit
 import random
+import timeit
 
-class TreeNode:
+#AI declaration: used it to clean up the cpode
+
+class Node:
     def __init__(self, key):
-        self.key = key
         self.left = None
         self.right = None
+        self.val = key
 
-class BinarySearchTree:
-    def __init__(self):
-        self.root = None
-    
-    def insert(self, key):
-        if not self.root:
-            self.root = TreeNode(key)
+def insert(root, key):
+    if root is None:
+        return Node(key)
+    else:
+        if root.val < key:
+            root.right = insert(root.right, key)
         else:
-            self._insert_recursive(self.root, key)
-    
-    def _insert_recursive(self, node, key):
-        if key < node.key:
-            if node.left:
-                self._insert_recursive(node.left, key)
-            else:
-                node.left = TreeNode(key)
-        elif key > node.key:
-            if node.right:
-                self._insert_recursive(node.right, key)
-            else:
-                node.right = TreeNode(key)
-    
-    def search(self, key):
-        return self._search_recursive(self.root, key)
-    
-    def _search_recursive(self, node, key):
-        if not node:
-            return False
-        if node.key == key:
-            return True
-        elif key < node.key:
-            return self._search_recursive(node.left, key)
-        else:
-            return self._search_recursive(node.right, key)
+            root.left = insert(root.left, key)
+    return root
 
-def measure_bst_performance(data):
-    bst = BinarySearchTree()
+def search(root, key):
+    if root is None or root.val == key:
+        return root
+    if root.val < key:
+        return search(root.right, key)
+    return search(root.left, key)
+
+def binary_search(arr, x): #basic binary search 
+    low = 0
+    high = len(arr) - 1
+    while low <= high:
+        mid = (low + high) // 2
+        if arr[mid] < x:
+            low = mid + 1
+        elif arr[mid] > x:
+            high = mid - 1
+        else:
+            return mid
+    return -1
+
+def bst_performance_time (arr): #measuremennt function to caclc the times 
+    root = None
     total_time = 0
-    for _ in range(10):
-        random.shuffle(data)
+    for element in arr:
+        root = insert(root, element)
+    for element in arr:
         start_time = timeit.default_timer()
-        for item in data:
-            bst.insert(item)
-        for item in data:
-            bst.search(item)
-        total_time += (timeit.default_timer() - start_time)
-    average_time = total_time / 10
-    return average_time, total_time
+        search(root, element)
+        end_time = timeit.default_timer()
+        total_time += end_time - start_time
+    return total_time / len(arr), total_time
 
-def measure_binary_search_performance(data):
+def binarysearch_performance_time(arr): #measures the binary search pperformance
+    sorted_arr = sorted(arr)
     total_time = 0
-    for _ in range(10):
-        random.shuffle(data)
-        data.sort()  # Sorting the shuffled data
+    for element in arr:
         start_time = timeit.default_timer()
-        for item in data:
-            binary_search(data, item)
-        total_time += (timeit.default_timer() - start_time)
-    average_time = total_time / 10
-    return average_time, total_time
+        binary_search(sorted_arr, element)
+        end_time = timeit.default_timer()
+        total_time += end_time - start_time
+    return total_time / len(arr), total_time
 
-def binary_search(arr, target):
-    left, right = 0, len(arr) - 1
-    while left <= right:
-        mid = (left + right) // 2
-        if arr[mid] == target:
-            return True
-        elif arr[mid] < target:
-            left = mid + 1
-        else:
-            right = mid - 1
-    return False
+# Generating a shuffled vector
+vector = list(range(100000))
+random.shuffle(vector)
 
-if __name__ == "__main__":
-    data = list(range(10000))  # Generating a sorted vector
-    bst_avg_time, bst_total_time = measure_bst_performance(data)
-    print("Binary Search Tree Performance:")
-    print("Average time per search:", bst_avg_time)
-    print("Total time:", bst_total_time)
-    
-    binary_search_avg_time, binary_search_total_time = measure_binary_search_performance(data)
-    print("\nBinary Search Performance:")
-    print("Average time per search:", binary_search_avg_time)
-    print("Total time:", binary_search_total_time)
+# Measuring BST performance
+bst_average_time, bst_total_time = bst_performance_time(vector)
+print("Avg time (BST search):", bst_average_time)
+print("total time (BST search):", bst_total_time)
+
+# Measuring binary search performance
+binary_search_average_time, binary_search_total_time = binarysearch_performance_time(vector)
+print("Avg time (Binaery search):", binary_search_average_time)
+print("total time (Binaery search):", binary_search_total_time)
+
+# Comparing performance
+if bst_average_time < binary_search_average_time:
+    print("BST is quicker.")
+else:
+    print("Binary search is quicker .")

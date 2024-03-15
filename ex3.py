@@ -1,77 +1,69 @@
+
+#AI declaration:
+#used it for the parse_expression fiunction
+
 import sys
 
-class TreeNode:
-    def __init__(self, value):
+class TreeNode: #basic tree implementation like in the slides 
+    def __init__(self, value, left=None, right=None):
         self.value = value
-        self.left = None
-        self.right = None
+        self.left = left
+        self.right = right
 
-def build_expression_tree(tokens):
+def computation(node): #basic computional if/else statement lowkey the easiest part 
+    if isinstance(node.value, str):
+        left_val = computation(node.left)
+        right_val = computation(node.right)
+
+        if node.value == '+':
+            return left_val + right_val
+        elif node.value == '-':
+            return left_val - right_val
+        elif node.value == '*':
+            return left_val * right_val
+        elif node.value == '/':
+            return left_val / right_val
+    else:
+        return node.value
+
+def parse(tokens):
     if len(tokens) == 1:
-        return TreeNode(int(tokens[0]))
+        tok = int(tokens[0])
+        return TreeNode((tok))
     
-    stack = []
-    i = 0
-    while i < len(tokens):
-        token = tokens[i]
+    if tokens[0] == '(' and tokens[-1] == ')':
+        tokens = tokens[1:-1]  # Remove surrounding parentheses
+
+    count = 0
+    last_index = -1
+    for i, token in enumerate(tokens):
         if token == '(':
-            stack.append(token)
-        elif token.isdigit():
-            node = TreeNode(int(token))
-            if stack and stack[-1] in ['+', '-', '*', '/']:
-                operator = stack.pop()
-                node.left = stack.pop()
-                node.right = node
-                node = TreeNode(operator)
-            stack.append(node)
-        elif token in ['+', '-', '*', '/']:
-            stack.append(token)
+            count += 1
         elif token == ')':
-            sub_expr = []
-            while stack[-1] != '(':
-                sub_expr.append(stack.pop())
-            stack.pop()  # pop '('
-            stack.append(build_expression_tree(sub_expr))
-        i += 1
+            count -= 1
+        elif count == 0 and token in ['+', '-', '*', '/']:
+            last_index = i
     
-    while len(stack) > 1:
-        right = stack.pop()
-        operator = stack.pop()
-        left = stack.pop()
-        node = TreeNode(operator)
-        node.left = left
-        node.right = right
-        stack.append(node)
-    
-    return stack[0]
+    if last_index != -1: #recursively callz the fuction to parse each half of the code
+        left = parse(tokens[:last_index])
+        right = parse(tokens[last_index+1:])
+        return TreeNode(tokens[last_index], left, right)
 
-def evaluate_expression_tree(root):
-    if root.value.isdigit():
-        return int(root.value)
-    
-    left_val = evaluate_expression_tree(root.left)
-    right_val = evaluate_expression_tree(root.right)
-    
-    if root.value == '+':
-        return left_val + right_val
-    elif root.value == '-':
-        return left_val - right_val
-    elif root.value == '*':
-        return left_val * right_val
-    elif root.value == '/':
-        return left_val / right_val
+    raise ValueError("Invalid expression")
 
-def evaluate_expression(expression):
-    tokens = expression.split()
-    expression_tree = build_expression_tree(tokens)
-    return evaluate_expression_tree(expression_tree)
+def main():
+    if len(sys.argv) != 2:
+        sys.exit(1)
+
+    math = sys.argv[1]
+    tokens = math.split()
+    try:
+        root = parse(tokens)
+        value = computation(root)
+        value = int(value)
+        print(value)
+    except ValueError as error:
+        print(f"Error {error}")
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python arithmetic_interpreter.py 'expression'")
-    else:
-        expression = sys.argv[1]
-        result = evaluate_expression(expression)
-        print("Result:", result)
-
-
+    main()
