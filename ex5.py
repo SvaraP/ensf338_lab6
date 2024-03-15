@@ -1,6 +1,8 @@
 import random
 import timeit
 
+#Ai declaration : Used both Chatgbt and stackoverflow to fix this code as it was very buggy
+# due to syntax issues  
 class ListNode:
     def __init__(self, value, nextNode=None):
         # Initialize a ListNode with a value and a reference to the next node
@@ -87,7 +89,7 @@ class HeapPriorityQueue:
         # Swap two elements in the heap
         self.heapArray[i], self.heapArray[j] = self.heapArray[j], self.heapArray[i]
 
-# Function to generate a list of 1000 tasks
+# generate a list of 1000 tasks
 def generateTask():
     tasks = []
     for _ in range(1000):
@@ -97,7 +99,7 @@ def generateTask():
             tasks.append(('dequeue', None))
     return tasks
 
-# Function to process tasks with ListPriorityQueue
+#  tasks with ListPriorityQueue
 def processTasksListQueue(tasks):
     queue = ListPriorityQueue()
     for task in tasks:
@@ -106,7 +108,7 @@ def processTasksListQueue(tasks):
         else:
             queue.dequeueElement()
 
-# Function to process tasks with HeapPriorityQueue
+#  tasks with HeapPriorityQueue
 def processTasksHeapQueue(tasks):
     queue = HeapPriorityQueue()
     for task in tasks:
@@ -118,9 +120,8 @@ def processTasksHeapQueue(tasks):
 # Generate the tasks
 tasks = generateTask()
 
-# Measure execution time for ListPriorityQueue
+# execution time 
 timeListQueue = timeit.timeit(lambda: processTasksListQueue(tasks), number=1)
-# Measure execution time for HeapPriorityQueue
 timeHeapQueue = timeit.timeit(lambda: processTasksHeapQueue(tasks), number=1)
 
 # Calculate average time per task
@@ -128,9 +129,12 @@ averageTimePerTaskList = timeListQueue / 1000
 averageTimePerTaskHeap = timeHeapQueue / 1000
 
 # Print the results
-print(f"ListPriorityQueue - Total Time: {timeListQueue:.6f} seconds, Avg Time/Task: {averageTimePerTaskList:.6f} seconds")
-print(f"HeapPriorityQueue - Total Time: {timeHeapQueue:.6f} seconds, Avg Time/Task: {averageTimePerTaskHeap:.6f} seconds")
+print(f"ListPriorityQueue's Total Time: {timeListQueue:.6f} seconds, Average Time per Task: {averageTimePerTaskList:.6f} seconds")
+print(f"HeapPriorityQueue's Total Time: {timeHeapQueue:.6f} seconds, Average Time per Task: {averageTimePerTaskHeap:.6f} seconds")
 
+#discussion : 
 
-#The HeapPriorityQueue is faster than the ListPriorityQueue due to the heap's
- efficient management of both insertions and deletions. While insertions in a linked list can be slow (requiring traversal of the list to maintain order), the heap structure ensures faster operations, making it more suitable for handling a large number of elements efficiently.
+#The HeapPriorityQueue typically outperforms the ListPriorityQueue in terms of speed. This is because, in a linked list 
+#(used in ListPriorityQueue), insertions and deletions often require traversing through the list, which can be time-consuming. 
+#On the other hand, a heap, which is the underlying structure of the HeapPriorityQueue, allows for quicker operations. 
+#The heap's design enables it to manage large volumes of elements more efficiently, thanks to its faster insertions and deletions."
